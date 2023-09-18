@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { NoiseFunction2D, createNoise2D } from 'simplex-noise';
 import alea from "alea";
+import * as Molecules from "./../../molecules";
 
 interface IVec2d {
     x: number;
@@ -73,22 +74,28 @@ function CanvaView(props: { dim: IVec2d }) {
 
     const setSeed = (str: string) => setParams(old => ({ ...old, seed: str }));
     const setZoom = (zoom: number) => setParams(old => ({ ...old, zoom: zoom }));
+    const setPosX = (x : number) => setParams(old => ({...old, pos : {...old.pos, x : x}}));
+    const setPosY = (y : number) => setParams(old => ({...old, pos : {...old.pos, y : y}}));
 
-    React.useEffect(() => {
+    const update = () => {
         if (canvasRef.current) {
             canvasCtxRef.current = canvasRef.current.getContext("2d");
 
             drawPerlinNoise({
                 ctx: canvasCtxRef.current,
                 dim: props.dim,
-                params: {
-                    seed: "jackLapiquette",
-                    zoom: params.zoom,
-                    pos : {x : 0, y : 0}
-                }
+                params: params
             });
         }
+    }
+
+    React.useEffect(() => {
+        update();
     }, []);
+
+    useEffect(() => {
+        update();
+    }, [params]);
 
     return (
         <div style={{ backgroundColor: "red", display: "flex", flexDirection: "column" }}>
@@ -116,6 +123,18 @@ function CanvaView(props: { dim: IVec2d }) {
                 min="1"
                 max="100" value={params.zoom}
                 onChange={(e) => setZoom(parseInt(e.target.value))}
+            />
+
+            <p>pos : {params.pos.x} {params.pos.y}</p>
+            <Molecules.IncrDecrNumber
+                value={params.pos.x}
+                setValue={setPosX}
+                step={1}
+            />
+            <Molecules.IncrDecrNumber
+                value={params.pos.y}
+                setValue={setPosY}
+                step={1}
             />
         </div>
     )

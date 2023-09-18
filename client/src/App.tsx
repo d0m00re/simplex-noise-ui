@@ -1,6 +1,5 @@
 import './App.css';
 import * as Pages from "./components/pages";
-
 function App() {
   return (
     <div>
