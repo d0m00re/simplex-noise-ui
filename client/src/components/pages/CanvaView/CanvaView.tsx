@@ -2,6 +2,8 @@ import React, { useRef, useEffect, useState } from 'react';
 import { NoiseFunction2D, createNoise2D } from 'simplex-noise';
 import alea from "alea";
 import * as Molecules from "./../../molecules";
+import ColorSelectorList, {IColorElem} from './../../molecules/ColorSelectorList';
+import cloneDeep from "lodash/cloneDeep";
 
 interface IVec2d {
     x: number;
@@ -25,6 +27,7 @@ interface IPerlinParams {
     seed: string;
     zoom: number;
     pos : IVec2d;
+    colorPalette : IColorElem[]
 }
 
 interface IDrawPerlinNoise {
@@ -46,7 +49,12 @@ const drawPerlinNoise = (props: IDrawPerlinNoise) => {
         tab.push([]);
         for (let x = 0; x < props.dim.x; x++) {
             let px = (props.params.pos.x + x) / props.params.zoom;
-            tab[y].push((noise2D(px, py) < 0) ? "green" : "white")
+            let noiseVal = ((noise2D(px, py) + 1) / 2) * 100;
+
+            // let find color
+            let iColor = props.params.colorPalette.findIndex(e => noiseVal < e.lowerThan);
+            let colorNoise = (iColor !== -1) ? props.params.colorPalette[iColor].color : "yellow";
+            tab[y].push(colorNoise);
         }
     }
 
@@ -69,13 +77,26 @@ function CanvaView(props: { dim: IVec2d }) {
     const [params, setParams] = useState<IPerlinParams>({
         seed: "jack",
         zoom: 1,
-        pos : {x : 0, y : 0}
+        pos : {x : 0, y : 0},
+        colorPalette : [
+            {color : "#FF0000", lowerThan : 50},
+            {color : "#FF00FF", lowerThan : 100}]
     });
 
     const setSeed = (str: string) => setParams(old => ({ ...old, seed: str }));
     const setZoom = (zoom: number) => setParams(old => ({ ...old, zoom: zoom }));
     const setPosX = (x : number) => setParams(old => ({...old, pos : {...old.pos, x : x}}));
     const setPosY = (y : number) => setParams(old => ({...old, pos : {...old.pos, y : y}}));
+    const pushColorPaletteElem = (colorPaletteElem : IColorElem) => setParams(old => ({...old, colorPalette : [...old.colorPalette, colorPaletteElem]}));
+    const deleteColorPaletteElem = (i : number) => {
+        let newColorPalette = params.colorPalette.filter((elem, index) => index !== i);
+        setParams(old => ({...old, colorPalette : newColorPalette}))
+    };
+    const updateColorPaletteElem = (colorPaletteElem : IColorElem, i : number) => {
+        let dupColorPalette = cloneDeep(params.colorPalette);
+        dupColorPalette[i] = colorPaletteElem;
+        setParams(old => ({...old, colorPalette : dupColorPalette}));
+    }
 
     const update = () => {
         if (canvasRef.current) {
@@ -94,11 +115,11 @@ function CanvaView(props: { dim: IVec2d }) {
     }, []);
 
     useEffect(() => {
-        update();
+      //  update();
     }, [params]);
 
     return (
-        <div style={{ backgroundColor: "red", display: "flex", flexDirection: "column" }}>
+        <div style={{ backgroundColor: "grey", display: "flex", flexDirection: "column" }}>
             <canvas
                 id="perlin"
                 ref={canvasRef}
@@ -135,6 +156,12 @@ function CanvaView(props: { dim: IVec2d }) {
                 value={params.pos.y}
                 setValue={setPosY}
                 step={1}
+            />
+            <ColorSelectorList
+                list={params.colorPalette}
+                pushOne={pushColorPaletteElem}
+                delOne={deleteColorPaletteElem}
+                updateOne={updateColorPaletteElem}
             />
         </div>
     )

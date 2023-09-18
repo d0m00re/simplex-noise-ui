@@ -1,4 +1,5 @@
-import React from 'react'
+import React from 'react';
+import { Button, Space } from 'antd';
 
 interface Props {
   value : number;
@@ -12,9 +13,9 @@ function IncrDecrNumber(props: Props) {
   
   return (
     <div style={{display : "flex", gap : "5px"}}>
-      <button onClick={decr}>-</button>
+      <Button onClick={decr}>-</Button>
       <p>{props.value}</p>
-      <button onClick={incr}>+</button>
+      <Button onClick={incr}>+</Button>
     </div>
   )
 }
