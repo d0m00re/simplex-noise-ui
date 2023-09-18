@@ -1,12 +1,12 @@
 import './App.css';
-//import * as Pages from "./components/pages";
+import * as Pages from "./components/pages";
 import Canvas from "./components/pages/CanvaView";
 
 
 function App() {
   return (
     <div>
-      <Canvas />
+      <Pages.CanvaView />
     </div>
   )
 }
