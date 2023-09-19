@@ -116,7 +116,7 @@ function CanvaView(props: { dim: IVec2d }) {
     }, []);
 
     useEffect(() => {
-         update();
+        update();
     }, [params]);
 
     return (
@@ -151,16 +151,25 @@ function CanvaView(props: { dim: IVec2d }) {
                 />
 
                 <p>pos : {params.pos.x} {params.pos.y}</p>
-                <Molecules.IncrDecrNumber
-                    value={params.pos.x}
-                    setValue={setPosX}
-                    step={1}
-                />
-                <Molecules.IncrDecrNumber
-                    value={params.pos.y}
-                    setValue={setPosY}
-                    step={1}
-                />
+                <Row>
+                    <p>x</p>
+                    <Input
+                        type="range"
+                        min="0"
+                        max="1000" value={params.pos.x}
+                        onChange={(e) => setPosX(parseInt(e.target.value))}
+                    />
+                </Row>
+                <Row>
+                    <p>y</p>
+                    <Input
+                        type="range"
+                        min="0"
+                        max="1000" value={params.pos.y}
+                        onChange={(e) => setPosY(parseInt(e.target.value))}
+                    />
+                </Row>
+                <p>color palette</p>
                 <ColorSelectorList
                     list={params.colorPalette}
                     pushOne={pushColorPaletteElem}
