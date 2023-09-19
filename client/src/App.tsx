@@ -3,7 +3,7 @@ import * as Pages from "./components/pages";
 function App() {
   return (
     <div>
-      <Pages.CanvaView dim={{x : 640, y : 360}} />
+      <Pages.CanvaView dim={{x : 300, y : 300}} />
     </div>
   )
 }

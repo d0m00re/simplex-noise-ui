@@ -1,8 +1,9 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { NoiseFunction2D, createNoise2D } from 'simplex-noise';
 import alea from "alea";
+import { Button, Row, Divider, Col, Input } from "antd";
 import * as Molecules from "./../../molecules";
-import ColorSelectorList, {IColorElem} from './../../molecules/ColorSelectorList';
+import ColorSelectorList, { IColorElem } from './../../molecules/ColorSelectorList';
 import cloneDeep from "lodash/cloneDeep";
 
 interface IVec2d {
@@ -26,8 +27,8 @@ const drawPixel = (props: IDrawPixel) => {
 interface IPerlinParams {
     seed: string;
     zoom: number;
-    pos : IVec2d;
-    colorPalette : IColorElem[]
+    pos: IVec2d;
+    colorPalette: IColorElem[]
 }
 
 interface IDrawPerlinNoise {
@@ -77,25 +78,25 @@ function CanvaView(props: { dim: IVec2d }) {
     const [params, setParams] = useState<IPerlinParams>({
         seed: "jack",
         zoom: 1,
-        pos : {x : 0, y : 0},
-        colorPalette : [
-            {color : "#FF0000", lowerThan : 50},
-            {color : "#FF00FF", lowerThan : 100}]
+        pos: { x: 0, y: 0 },
+        colorPalette: [
+            { color: "#FFFFFF", lowerThan: 20 },
+            { color: "#000000", lowerThan: 100 }]
     });
 
     const setSeed = (str: string) => setParams(old => ({ ...old, seed: str }));
     const setZoom = (zoom: number) => setParams(old => ({ ...old, zoom: zoom }));
-    const setPosX = (x : number) => setParams(old => ({...old, pos : {...old.pos, x : x}}));
-    const setPosY = (y : number) => setParams(old => ({...old, pos : {...old.pos, y : y}}));
-    const pushColorPaletteElem = (colorPaletteElem : IColorElem) => setParams(old => ({...old, colorPalette : [...old.colorPalette, colorPaletteElem]}));
-    const deleteColorPaletteElem = (i : number) => {
+    const setPosX = (x: number) => setParams(old => ({ ...old, pos: { ...old.pos, x: x } }));
+    const setPosY = (y: number) => setParams(old => ({ ...old, pos: { ...old.pos, y: y } }));
+    const pushColorPaletteElem = (colorPaletteElem: IColorElem) => setParams(old => ({ ...old, colorPalette: [...old.colorPalette, colorPaletteElem] }));
+    const deleteColorPaletteElem = (i: number) => {
         let newColorPalette = params.colorPalette.filter((elem, index) => index !== i);
-        setParams(old => ({...old, colorPalette : newColorPalette}))
+        setParams(old => ({ ...old, colorPalette: newColorPalette }))
     };
-    const updateColorPaletteElem = (colorPaletteElem : IColorElem, i : number) => {
+    const updateColorPaletteElem = (colorPaletteElem: IColorElem, i: number) => {
         let dupColorPalette = cloneDeep(params.colorPalette);
         dupColorPalette[i] = colorPaletteElem;
-        setParams(old => ({...old, colorPalette : dupColorPalette}));
+        setParams(old => ({ ...old, colorPalette: dupColorPalette }));
     }
 
     const update = () => {
@@ -115,55 +116,59 @@ function CanvaView(props: { dim: IVec2d }) {
     }, []);
 
     useEffect(() => {
-      //  update();
+         update();
     }, [params]);
 
     return (
-        <div style={{ backgroundColor: "grey", display: "flex", flexDirection: "column" }}>
-            <canvas
-                id="perlin"
-                ref={canvasRef}
-                width={props.dim.x + ""}
-                height={props.dim.y + ""}
-            />
-            <button onClick={() => drawPerlinNoise({
-                ctx: canvasCtxRef.current,
-                dim: props.dim,
-                params: params
-            })}>draw</button>
+        <Row justify={"center"}>
+            <Col>
+                <canvas
+                    id="perlin"
+                    style={{ width: "600px", height: "600px" }}
+                    ref={canvasRef}
+                    width={props.dim.x + ""}
+                    height={props.dim.y + ""}
+                />
+                <Button onClick={() => drawPerlinNoise({
+                    ctx: canvasCtxRef.current,
+                    dim: props.dim,
+                    params: params
+                })}>draw</Button>
+            </Col>
+            <Col>
+                <p>seed : </p>
+                <Input
+                    type="text"
+                    value={params.seed}
+                    onChange={(e) => setSeed(e.target.value)}
+                />
+                <p>zoom : {params.zoom}</p>
+                <Input
+                    type="range"
+                    min="1"
+                    max="100" value={params.zoom}
+                    onChange={(e) => setZoom(parseInt(e.target.value))}
+                />
 
-            <p>seed : </p>
-            <input
-                type="text"
-                value={params.seed}
-                onChange={(e) => setSeed(e.target.value)}
-            />
-            <p>zoom : {params.zoom}</p>
-            <input
-                type="range"
-                min="1"
-                max="100" value={params.zoom}
-                onChange={(e) => setZoom(parseInt(e.target.value))}
-            />
-
-            <p>pos : {params.pos.x} {params.pos.y}</p>
-            <Molecules.IncrDecrNumber
-                value={params.pos.x}
-                setValue={setPosX}
-                step={1}
-            />
-            <Molecules.IncrDecrNumber
-                value={params.pos.y}
-                setValue={setPosY}
-                step={1}
-            />
-            <ColorSelectorList
-                list={params.colorPalette}
-                pushOne={pushColorPaletteElem}
-                delOne={deleteColorPaletteElem}
-                updateOne={updateColorPaletteElem}
-            />
-        </div>
+                <p>pos : {params.pos.x} {params.pos.y}</p>
+                <Molecules.IncrDecrNumber
+                    value={params.pos.x}
+                    setValue={setPosX}
+                    step={1}
+                />
+                <Molecules.IncrDecrNumber
+                    value={params.pos.y}
+                    setValue={setPosY}
+                    step={1}
+                />
+                <ColorSelectorList
+                    list={params.colorPalette}
+                    pushOne={pushColorPaletteElem}
+                    delOne={deleteColorPaletteElem}
+                    updateOne={updateColorPaletteElem}
+                />
+            </Col>
+        </Row>
     )
 }
 
