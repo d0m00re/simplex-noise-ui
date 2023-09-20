@@ -121,7 +121,6 @@ function CanvaView(props: { dim: IVec2d }) {
 
     return (
         <Row justify={"center"} align="middle" style={{ backgroundColor: "grey", padding: '12px', height: "100%" }} >
-            <Row>
                 <Col span={11} style={{ backgroundColor: "orange" }}>
                     <canvas
                         id="perlin"
@@ -131,7 +130,6 @@ function CanvaView(props: { dim: IVec2d }) {
                         height={props.dim.y + ""}
                     />
                 </Col>
-                <Col span={2}>dd</Col>
                 <Col span={11} style={{ backgroundColor: "orange" }}>
                     <p>seed : </p>
                     <Input
@@ -174,7 +172,6 @@ function CanvaView(props: { dim: IVec2d }) {
                         updateOne={updateColorPaletteElem}
                     />
                 </Col>
-            </Row>
         </Row>
     )
 }
