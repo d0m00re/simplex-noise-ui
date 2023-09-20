@@ -1,8 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { NoiseFunction2D, createNoise2D } from 'simplex-noise';
+import { createNoise2D } from 'simplex-noise';
 import alea from "alea";
-import { Button, Row, Divider, Col, Input } from "antd";
-import * as Molecules from "./../../molecules";
+import { Button, Row, Col, Input } from "antd";
 import ColorSelectorList, { IColorElem } from './../../molecules/ColorSelectorList';
 import cloneDeep from "lodash/cloneDeep";
 
@@ -90,6 +89,7 @@ function CanvaView(props: { dim: IVec2d }) {
     const setPosY = (y: number) => setParams(old => ({ ...old, pos: { ...old.pos, y: y } }));
     const pushColorPaletteElem = (colorPaletteElem: IColorElem) => setParams(old => ({ ...old, colorPalette: [...old.colorPalette, colorPaletteElem] }));
     const deleteColorPaletteElem = (i: number) => {
+
         let newColorPalette = params.colorPalette.filter((elem, index) => index !== i);
         setParams(old => ({ ...old, colorPalette: newColorPalette }))
     };
@@ -120,63 +120,60 @@ function CanvaView(props: { dim: IVec2d }) {
     }, [params]);
 
     return (
-        <Row justify={"center"}>
-            <Col>
-                <canvas
-                    id="perlin"
-                    style={{ width: "600px", height: "600px" }}
-                    ref={canvasRef}
-                    width={props.dim.x + ""}
-                    height={props.dim.y + ""}
-                />
-                <Button onClick={() => drawPerlinNoise({
-                    ctx: canvasCtxRef.current,
-                    dim: props.dim,
-                    params: params
-                })}>draw</Button>
-            </Col>
-            <Col>
-                <p>seed : </p>
-                <Input
-                    type="text"
-                    value={params.seed}
-                    onChange={(e) => setSeed(e.target.value)}
-                />
-                <p>zoom : {params.zoom}</p>
-                <Input
-                    type="range"
-                    min="1"
-                    max="100" value={params.zoom}
-                    onChange={(e) => setZoom(parseInt(e.target.value))}
-                />
+        <Row justify={"center"} align="middle" style={{ backgroundColor: "grey", padding: '12px', height: "100%" }} >
+            <Row>
+                <Col span={12} style={{ backgroundColor: "orange" }}>
+                    <canvas
+                        id="perlin"
+                        style={{ width: "600px", height: "600px" }}
+                        ref={canvasRef}
+                        width={props.dim.x + ""}
+                        height={props.dim.y + ""}
+                    />
+                </Col>
+                <Col span={12} style={{ backgroundColor: "orange" }}>
+                    <p>seed : </p>
+                    <Input
+                        type="text"
+                        value={params.seed}
+                        onChange={(e) => setSeed(e.target.value)}
+                    />
+                    <p>zoom : {params.zoom}</p>
+                    <Input
+                        type="range"
+                        min="1"
+                        max="100" value={params.zoom}
+                        onChange={(e) => setZoom(parseInt(e.target.value))}
+                    />
 
-                <p>pos : {params.pos.x} {params.pos.y}</p>
-                <Row>
-                    <p>x</p>
-                    <Input
-                        type="range"
-                        min="0"
-                        max="1000" value={params.pos.x}
-                        onChange={(e) => setPosX(parseInt(e.target.value))}
+                    <p>pos : {params.pos.x} {params.pos.y}</p>
+                    <Row>
+                        <p>x</p>
+                        <Input
+                            type="range"
+                            min="0"
+                            max="1000" value={params.pos.x}
+                            onChange={(e) => setPosX(parseInt(e.target.value))}
+                        />
+                    </Row>
+                    <Row>
+                        <p>y</p>
+                        <Input
+                            type="range"
+                            min="0"
+                            max="1000" value={params.pos.y}
+                            onChange={(e) => setPosY(parseInt(e.target.value))}
+                        />
+                    </Row>
+                    <p>color palette</p>
+                    <ColorSelectorList
+                        list={params.colorPalette}
+                        pushOne={pushColorPaletteElem}
+                        delOne={deleteColorPaletteElem}
+                        updateOne={updateColorPaletteElem}
                     />
-                </Row>
-                <Row>
-                    <p>y</p>
-                    <Input
-                        type="range"
-                        min="0"
-                        max="1000" value={params.pos.y}
-                        onChange={(e) => setPosY(parseInt(e.target.value))}
-                    />
-                </Row>
-                <p>color palette</p>
-                <ColorSelectorList
-                    list={params.colorPalette}
-                    pushOne={pushColorPaletteElem}
-                    delOne={deleteColorPaletteElem}
-                    updateOne={updateColorPaletteElem}
-                />
-            </Col>
+                </Col>
+            </Row>
         </Row>
     )
 }

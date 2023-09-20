@@ -1,4 +1,3 @@
-import React from 'react'
 import { ColorPicker, Space, Button, InputNumber } from 'antd';
 
 export interface IColorElem {

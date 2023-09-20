@@ -1,5 +1,4 @@
-import React from 'react';
-import { Button, Space } from 'antd';
+import { Button } from 'antd';
 
 interface Props {
   value : number;
